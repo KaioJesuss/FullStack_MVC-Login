@@ -1,4 +1,5 @@
 
+const usuarioModel = require("../models/usuarioModels");
 
 class HomeController{
 
@@ -8,24 +9,23 @@ class HomeController{
         res.render('login', { msgResposta: null , tipoCss: ""});
     }
 
-    login (req, res)
+    async login (req, res)
     {
-        const email = req.body.email;
-        const senha = req.body.senha;
-        let resposta = "";
-        let tipo = "";
+        const {email, senha} = req.body;
+        let user = new usuarioModel(email, senha);
+        const result = await user.confirmar();
 
-        if(email === "kaioj@gmail.com" && senha === "123456")
+        if(result.length > 0)
         {
-            resposta = 'Login com Sucesso'
-            tipo = 'correto'
+
+            res.render('login', {msgResposta: 'Login com Sucesso', tipoCss: "correto"})
         }
         else
         {
-            resposta = 'Email ou senha invalidos'
-            tipo = 'erro'
+             res.render('login', {msgResposta: 'Email ou senha invalidos', tipoCss: "erro"})
+
         }
-        res.render("login", { msgResposta: resposta, tipoCss: tipo});
+        
     }
 }
 
